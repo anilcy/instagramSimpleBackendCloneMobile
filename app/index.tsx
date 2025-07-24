@@ -1,15 +1,19 @@
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
+import { useColorScheme } from 'react-native';
+
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
   Dimensions,
-  TextInput,
   FlatList,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -96,6 +100,10 @@ const mockPosts = [
 ];
 
 export default function InstagramClone() {
+
+  const colorScheme = useColorScheme();              
+  const bgColor     = colorScheme === 'dark' ? '#000' : '#fff';
+
   const [posts, setPosts] = useState(mockPosts);
   const [stories, setStories] = useState(mockStories);
   const [currentTab, setCurrentTab] = useState('home');
@@ -127,6 +135,9 @@ export default function InstagramClone() {
       <View style={styles.postHeader}>
         <Image source={{ uri: post.author.profilePictureUrl }} style={styles.profileImage} />
         <Text style={styles.username}>{post.author.userName}</Text>
+        <View style={{ marginLeft: 'auto' }}>
+          <Feather name="more-horizontal" size={22} color="#222" />
+        </View>
       </View>
 
       {/* Image */}
@@ -135,28 +146,28 @@ export default function InstagramClone() {
       {/* Actions */}
       <View style={styles.actionsContainer}>
         <TouchableOpacity onPress={() => handleLike(post.id)} style={styles.actionButton}>
-          <View style={[styles.iconButton, post.isLiked && styles.likedButton]}>
-            <Text style={[styles.iconText, post.isLiked && styles.likedText]}>♡</Text>
-          </View>
+          <FontAwesome
+            name={post.isLiked ? "heart" : "heart-o"}
+            size={24}
+            color={post.isLiked ? "#ff3040" : "#222"}
+          />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.actionButton}>
-          <View style={styles.iconButton}>
-            <Text style={styles.iconText}>○</Text>
-          </View>
+          <Feather name="message-circle" size={24} color="#222" />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.actionButton}>
-          <View style={styles.iconButton}>
-            <Text style={styles.iconText}>↗</Text>
-          </View>
+          <Feather name="send" size={24} color="#222" />
         </TouchableOpacity>
+
         <View style={styles.rightActions}>
           <TouchableOpacity>
-            <View style={styles.iconButton}>
-              <Text style={styles.iconText}>⋯</Text>
-            </View>
+            <Feather name="bookmark" size={24} color="#222" />
           </TouchableOpacity>
         </View>
       </View>
+
 
       {/* Likes */}
       <Text style={styles.likesText}>
@@ -173,20 +184,33 @@ export default function InstagramClone() {
   );
 
   const renderStory = ({ item }: { item: typeof mockStories[0] }) => (
-    <TouchableOpacity onPress={() => handleStoryPress(item.id)} style={styles.storyContainer}>
-      <View style={[
-        styles.storyImageContainer,
-        item.isOwnStory ? styles.ownStoryBorder : 
-        item.hasNewStory && !item.isViewed ? styles.newStoryBorder : 
-        styles.viewedStoryBorder
-      ]}>
-        <Image source={{ uri: item.profilePictureUrl }} style={styles.storyImage} />
+    <TouchableOpacity
+      onPress={() => handleStoryPress(item.id)}
+      style={styles.storyContainer}
+    >
+      <LinearGradient
+        colors={
+          item.isOwnStory
+            ? ['#c0c0c0', '#c0c0c0']
+            : item.hasNewStory && !item.isViewed
+            ? ['#feda75', '#fa7e1e', '#d62976', '#962fbf', '#4f5bd5']
+            : ['#c0c0c0', '#c0c0c0']
+        }
+        style={styles.storyGradientBorder}
+      >
+        <Image
+          source={{ uri: item.profilePictureUrl }}
+          style={[
+            styles.storyImage,
+            { borderColor: bgColor }       // Dinamik boşluk rengi
+          ]}
+        />
         {item.isOwnStory && (
           <View style={styles.addStoryButton}>
             <Text style={styles.addStoryIcon}>+</Text>
           </View>
         )}
-      </View>
+      </LinearGradient>
       <Text style={styles.storyUsername} numberOfLines={1}>
         {item.isOwnStory ? 'Your Story' : item.userName}
       </Text>
@@ -353,31 +377,31 @@ export default function InstagramClone() {
           style={[styles.tab, currentTab === 'home' && styles.activeTab]}
           onPress={() => setCurrentTab('home')}
         >
-          <Text style={styles.tabIcon}>🏠</Text>
+          <Feather name="home" size={24} color={currentTab === 'home' ? "#222" : "#888"} />
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, currentTab === 'search' && styles.activeTab]}
           onPress={() => setCurrentTab('search')}
         >
-          <Text style={styles.tabIcon}>🔍</Text>
+          <Feather name="search" size={24} color={currentTab === 'search' ? "#222" : "#888"} />
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, currentTab === 'create' && styles.activeTab]}
           onPress={() => setCurrentTab('create')}
         >
-          <Text style={styles.tabIcon}>➕</Text>
+          <Feather name="plus" size={24} color={currentTab === 'create' ? "#222" : "#888"} />
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, currentTab === 'activity' && styles.activeTab]}
           onPress={() => setCurrentTab('activity')}
         >
-          <Text style={styles.tabIcon}>🔔</Text>
+          <Feather name="bell" size={24} color={currentTab === 'activity' ? "#222" : "#888"} />
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, currentTab === 'profile' && styles.activeTab]}
           onPress={() => setCurrentTab('profile')}
         >
-          <Text style={styles.tabIcon}>👤</Text>
+          <Feather name="user" size={24} color={currentTab === 'profile' ? "#222" : "#888"} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -466,6 +490,15 @@ const styles = StyleSheet.create({
     color: '#ff3040',
   },
   // Stories Styles
+    storyGradientBorder: {
+    width: 66,
+    height: 66,
+    borderRadius: 33,
+    padding: 3,
+    marginBottom: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   storiesSection: {
     backgroundColor: '#fff',
     paddingVertical: 10,
@@ -498,6 +531,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
+    borderWidth: 1, 
   },
   newStoryBorder: {
     borderWidth: 2,
